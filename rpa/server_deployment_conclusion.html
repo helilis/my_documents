@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RPA服务器部署密度与群发策略评估结论</title>
+  <style>
+    :root{color-scheme:light;--ink:#18283d;--muted:#637186;--line:#dde5ee;--blue:#215bca;--bg:#f2f5f9}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.8 "Microsoft YaHei","PingFang SC",sans-serif}main{max-width:1060px;margin:36px auto;padding:44px 52px;background:#fff;border:1px solid var(--line);border-radius:16px}header{border-bottom:2px solid var(--ink);padding-bottom:22px}.eyebrow{font-size:12px;letter-spacing:2px;color:var(--blue);font-weight:700}h1{font-size:30px;line-height:1.4;margin:10px 0}header p{margin:4px 0;color:var(--muted)}h2{font-size:20px;margin:30px 0 12px}p{margin:10px 0}.callout{background:#edf4ff;border-left:4px solid var(--blue);padding:17px 21px;margin:24px 0}.callout p{margin:4px 0}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0}.card{border:1px solid var(--line);border-radius:10px;padding:17px}.card small{display:block;color:var(--muted)}.number{font-size:29px;font-weight:700;color:var(--blue);line-height:1.5}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:11px 13px;text-align:left;border-bottom:1px solid var(--line)}th{background:#f3f6fa;font-weight:600}tr.recommend td{background:#eff6ff}td:not(:first-child){font-variant-numeric:tabular-nums}.formula{background:#f6f8fb;padding:15px 19px;border-radius:8px;font-family:"Microsoft YaHei",sans-serif}.formula p{margin:3px 0}.note{font-size:13px;color:var(--muted)}ul,ol{padding-left:23px}li{margin:6px 0}footer{margin-top:30px;padding-top:15px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+    @media(max-width:700px){main{margin:0;padding:25px 20px;border:0;border-radius:0}h1{font-size:25px}.cards{grid-template-columns:1fr}.card{padding:12px 17px}th,td{padding:9px;min-width:85px}}
+    @media print{@page{size:A4;margin:16mm}body{background:#fff;font-size:11px}main{max-width:none;margin:0;padding:0;border:0;border-radius:0}h1{font-size:25px}h2{font-size:16px;margin-top:20px}.cards{gap:10px}.card{padding:10px}.number{font-size:24px}th,td{padding:7px;font-size:11px}.callout{margin:16px 0;padding:12px 16px}.table-wrap{overflow:visible}tr,.callout,.cards{break-inside:avoid}h2{break-after:avoid}footer{font-size:10px}}
+  </style>
+</head>
+<body><main>
+<header>
+<div class="eyebrow">RPA · 部署与群发策略</div>
+<h1>RPA服务器部署密度与群发策略评估结论</h1>
+<p>128 个物理核心 / 512 GB 内存 · 单台虚拟机 2 vCPU，对比 4 GB、3 GB 与 2 GB 内存方案</p>
+<p class="note">更新日期：2026 年 10 月 23 日 ｜ 群发样本日期：2026 年 10 月 22 日</p>
+</header>
+<section class="callout">
+<strong>结论：通过降低单台虚拟机内存配置，部署密度可由原预计单机 100 台，向 3 GB 方案的 140 台或 2 GB 方案的 200 台提升验证；提高密度必须控制群发并发。</strong>
+<p><strong>2 核 3 GB：</strong>候选单机部署 <strong>140 台</strong>，较原预计提升 <strong>40%</strong>；CPU 预算为 80% 时约可同时群发 <strong>74 台</strong>。1200 台虚拟机共需 <strong>9 台服务器</strong>，扣除已申请 2 台，<strong>还需采购 7 台</strong>。</p>
+<p><strong>2 核 2 GB：</strong>候选单机部署 <strong>200 台</strong>，较原预计提升 <strong>100%</strong>；CPU 预算为 80% 时约可同时群发 <strong>62 台</strong>。1200 台虚拟机共需 <strong>6 台服务器</strong>，扣除已申请 2 台，<strong>还需采购 4 台</strong>。</p>
+<p><strong>数据依据：</strong>10 月 22 日有效记录的销售并发峰值为 225，任务呈现时间分散特征，支持开展错峰试点。数据口径、半小时分布及条件见第 9～11 部分。</p>
+<p class="note">以上均为待压测验证的候选目标，并发估算假设其余虚拟机保持空闲，未计入宿主机实际 CPU 开销。2 GB 方案须重点验证内存压力、换页及任务耗时；实际并发及采购数量应在验证后确认。数量不含故障接管及维护备用资源。</p>
+</section>
+<section>
+<h2>1. 评估范围与业务背景</h2>
+<p>本次按 1200 个销售企微账号、1 个账号对应 1 台虚拟机评估，不考虑销售团队扩张。60 个客服账号已完成迁移，目前运行在公司现有服务器上，不纳入本次新服务器容量需求。</p>
+<p>新服务器已申请 2 台。现有数据为单台虚拟机群发时 CPU 平均占用 60%、空闲时占用 10%，对应约 1.2 核及 0.2 核的等效算力需求。</p>
+</section>
+<section>
+<h2>2. 单机部署密度与群发并发估算</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>单机虚拟机数量</th><th>全部群发的 CPU 需求占比</th><th>配置内存合计</th><th>留给宿主机及开销的内存</th><th>CPU 预算为 80% 时，约可同时群发数</th><th>判断</th></tr></thead>
+<tbody>
+<tr><td>80 台</td><td>75%</td><td>320 GB</td><td>192 GB</td><td>80 台（全部）</td><td>全部群发仍有 CPU 余量</td></tr>
+<tr><td>100 台（原预计）</td><td>约 94%</td><td>400 GB</td><td>112 GB</td><td>82 台</td><td>原部署基准，全并发时 CPU 余量较小</td></tr>
+<tr class="recommend"><td><strong>110 台</strong></td><td>约 103%</td><td>440 GB</td><td><strong>72 GB</strong></td><td><strong>80 台</strong></td><td>密度提升 10%，必须控制群发并发，待压测验证</td></tr>
+<tr class="recommend"><td><strong>120 台</strong></td><td>约 113%</td><td>480 GB</td><td><strong>32 GB</strong></td><td><strong>78 台</strong></td><td>密度提升 20%，必须控制群发并发；内存仅余 32 GB，需重点验证</td></tr>
+</tbody></table></div>
+<p class="note">内存余量 = 512 GB − 虚拟机数量 × 4 GB，为留给宿主机及虚拟化开销的配置余量，尚未扣除其实际占用。</p>
+<p class="note">并发计算：设部署总数为 N、同时群发数为 B，其余虚拟机保持空闲，则 1.2B + 0.2(N − B) ≤ 128 × 80%。B 向下取整且不超过 N，得到表中并发数。空闲虚拟机的 CPU 消耗已纳入计算。</p>
+<p class="note">表中超过 100% 的数值表示估算的算力需求超出服务器能力，并非实际监控利用率会超过 100%。80% 为本次规划预算；估算未计入宿主机实际 CPU 开销、虚拟化损耗及业务峰值，实际并发可能需要下调，容量需以压测确认。</p>
+</section>
+<section>
+<h2>3. 部署数量与群发负载的关系</h2>
+<p><strong>部署数量：</strong>表示服务器承载的常驻虚拟机数量。本次提升目标为每台部署 110～120 台，高于原预计的 100 台，增加的是可常驻的账号数量。</p>
+<p><strong>群发并发：</strong>必须单独控制。单机部署 110 台时，80 台群发、30 台空闲的预计 CPU 占用约为 79.7%；部署 120 台时，78 台群发、42 台空闲的预计 CPU 占用同样约为 79.7%。</p>
+<p>实际运行安排应结合任务完成时限、成功率及资源峰值确定。部署容量估算不等同于全部虚拟机同时群发的性能承诺。</p>
+</section>
+<section>
+<h2>4. 提高部署密度后的采购数量影响</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>单机规划容量</th><th>运行条件</th><th>总需新服务器</th><th>已申请</th><th>还需申请</th></tr></thead>
+<tbody>
+<tr><td>80 台</td><td>以全部同时群发为目标压测</td><td>15 台</td><td>2 台</td><td>13 台</td></tr>
+<tr><td>100 台</td><td>原预计部署方案</td><td>12 台</td><td>2 台</td><td>10 台</td></tr>
+<tr class="recommend"><td><strong>110 台</strong></td><td>提升目标：控制群发并发，待压测验证</td><td><strong>11 台</strong></td><td>2 台</td><td><strong>9 台</strong></td></tr>
+<tr class="recommend"><td><strong>120 台</strong></td><td>提升目标：控制群发并发，并验证内存余量</td><td><strong>10 台</strong></td><td>2 台</td><td><strong>8 台</strong></td></tr>
+</tbody></table></div>
+<p class="note">服务器数量按 1200 ÷ 单机容量向上取整，再扣除已申请 2 台计算。110 台与 120 台为待验证方案，不能直接视为已确认容量。上述数量均未额外计入团队扩张、故障接管及维护备用资源。</p>
+</section>
+<section>
+<h2>5. 实施建议</h2>
+<p><strong>先使用已申请服务器验证每台 110 台、约 80 台同时群发的方案；通过后再验证每台 120 台、约 78 台同时群发的方案。提高部署密度必须配套群发并发控制。</strong></p>
+<p>提高部署密度可从降低空闲 CPU 消耗、优化任务调度及合理配置内存入手。压测需同时检查群发耗时、成功率、CPU 峰值与调度等待、内存换页和磁盘延迟，并据此确定最终部署数量和任务执行安排。</p>
+</section>
+<section>
+<h2>6. Windows 10 改为 2 核 3 GB 后的容量评估</h2>
+<p><strong>在 3 GB 内存满足企微及 RPA 实际运行需求的前提下，单机部署密度可由原预计 100 台向 130～140 台提升验证，其中 140 台对应提升 40%；150 台作为后续测试目标。提高密度必须控制同时群发数量。</strong></p>
+<p>本方案操作系统为 Windows 10，单台虚拟机调整为 2 vCPU、3 GB 内存。以下暂沿用群发 CPU 占用 60%、空闲占用 10% 的数据；降低内存后若发生频繁换页，需重新测量 CPU 消耗及任务耗时。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>单机虚拟机数量</th><th>配置内存合计</th><th>留给宿主机及开销的内存</th><th>CPU 预算为 80% 时，约可同时群发数</th><th>验证定位</th></tr></thead>
+<tbody>
+<tr><td>120 台</td><td>360 GB</td><td>152 GB</td><td>78 台</td><td>与 4 GB 方案比较内存余量</td></tr>
+<tr><td>130 台</td><td>390 GB</td><td>122 GB</td><td>76 台</td><td>整机密度验证的第一阶段</td></tr>
+<tr class="recommend"><td><strong>140 台</strong></td><td><strong>420 GB</strong></td><td><strong>92 GB</strong></td><td><strong>74 台</strong></td><td><strong>候选目标，须通过压测</strong></td></tr>
+<tr><td>150 台</td><td>450 GB</td><td>62 GB</td><td>72 台</td><td>后续测试目标</td></tr>
+</tbody></table></div>
+<p class="note">内存余量 = 512 GB − 虚拟机数量 × 3 GB，尚未扣除宿主机及虚拟化实际开销。并发数沿用第 2 部分公式：1.2B + 0.2(N − B) ≤ 128 × 80%，向下取整；其余虚拟机保持空闲，未计入宿主机实际 CPU 开销。降低内存增加的是常驻容量，不会增加群发算力。</p>
+<h2>3 GB 方案对采购数量的影响</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>单机部署容量</th><th>总需新服务器</th><th>已申请</th><th>还需申请</th></tr></thead>
+<tbody>
+<tr><td>120 台</td><td>10 台</td><td>2 台</td><td>8 台</td></tr>
+<tr><td>130 台</td><td>10 台</td><td>2 台</td><td>8 台</td></tr>
+<tr class="recommend"><td><strong>140 台</strong></td><td><strong>9 台</strong></td><td><strong>2 台</strong></td><td><strong>7 台</strong></td></tr>
+<tr><td>150 台</td><td>8 台</td><td>2 台</td><td>6 台</td></tr>
+</tbody></table></div>
+<p><strong>补充结论：若 2 核 3 GB、单机 140 台的方案验证通过，可将原预计单机 100 台提升至 140 台，并将群发并发按约 74 台作为压测起点。1200 台虚拟机共需 9 台新服务器，扣除已申请 2 台，还需申请 7 台。</strong></p>
+<p>先选取 10～20 台代表性虚拟机调整为 3 GB，对比登录、群发及连续运行时的内存余量、换页、任务耗时和成功率；通过后依次验证单机 130 台、140 台。实际并发可能需要根据宿主机开销和峰值下调，采购数量应在验证后确定。</p>
+<p class="note">本节为新增的 3 GB 候选方案；前文第 2～5 部分保留 4 GB 方案供对比。以上均按 1200 台虚拟机需求测算，未额外计入故障接管、维护备用或团队扩张资源。</p>
+</section>
+<section>
+<h2>7. Windows 10 改为 2 核 2 GB 后的容量评估</h2>
+<p><strong>2 核 2 GB 可作为进一步提高部署密度的试点配置，但尚未确认适合批量生产部署。可依次验证单机 160、180、200 台，220 台作为后续测试目标；增加常驻数量必须配套群发并发控制。</strong></p>
+<p>以下暂沿用群发 CPU 占用 60%、空闲占用 10% 的模型。2 GB 是否足够，须验证 Windows 10、企微与 RPA 同时运行时的内存需求；若频繁换页，CPU、磁盘负载及任务耗时可能增加，需重新测算并发。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>单机虚拟机数量</th><th>配置内存合计</th><th>留给宿主机及开销的内存</th><th>CPU 预算为 80% 时，约可同时群发数</th><th>验证定位</th></tr></thead>
+<tbody>
+<tr><td>160 台</td><td>320 GB</td><td>192 GB</td><td>70 台</td><td>整机密度验证第一阶段</td></tr>
+<tr><td>180 台</td><td>360 GB</td><td>152 GB</td><td>66 台</td><td>第一阶段通过后逐步增加</td></tr>
+<tr class="recommend"><td><strong>200 台</strong></td><td><strong>400 GB</strong></td><td><strong>112 GB</strong></td><td><strong>62 台</strong></td><td><strong>候选测试方案，须通过压测</strong></td></tr>
+<tr><td>220 台</td><td>440 GB</td><td>72 GB</td><td>58 台</td><td>后续测试目标</td></tr>
+</tbody></table></div>
+<p class="note">内存余量 = 512 GB − 虚拟机数量 × 2 GB，尚未扣除宿主机及虚拟化实际开销。并发计算沿用 1.2B + 0.2(N − B) ≤ 128 × 80%，B 向下取整，其余虚拟机保持空闲。表中并发未计入宿主机实际 CPU 开销。</p>
+<h2>2 GB 方案对采购数量的影响</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>单机部署容量</th><th>总需新服务器</th><th>已申请</th><th>还需申请</th></tr></thead>
+<tbody>
+<tr><td>160 台</td><td>8 台</td><td>2 台</td><td>6 台</td></tr>
+<tr><td>180 台</td><td>7 台</td><td>2 台</td><td>5 台</td></tr>
+<tr class="recommend"><td><strong>200 台</strong></td><td><strong>6 台</strong></td><td><strong>2 台</strong></td><td><strong>4 台</strong></td></tr>
+<tr><td>220 台</td><td>6 台</td><td>2 台</td><td>4 台</td></tr>
+</tbody></table></div>
+<p class="note">按 1200 台虚拟机需求测算，服务器数量向上取整。220 台相较 200 台并未进一步减少服务器总需求；两者均需 6 台。表中不含故障接管、维护备用及团队扩张资源。</p>
+</section>
+<section>
+<h2>8. 2 GB 与 3 GB 候选方案对比</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>对比项目</th><th>2 核 3 GB 方案</th><th>2 核 2 GB 方案</th></tr></thead>
+<tbody>
+<tr><td>候选单机部署数量</td><td>140 台</td><td>200 台</td></tr>
+<tr><td>相较原预计 100 台的密度提升</td><td>40%</td><td>100%</td></tr>
+<tr><td>虚拟机配置内存合计</td><td>420 GB</td><td>400 GB</td></tr>
+<tr><td>留给宿主机及开销的内存</td><td>92 GB</td><td>112 GB</td></tr>
+<tr><td>单机约可同时群发数（CPU 80% 预算）</td><td>74 台</td><td>62 台</td></tr>
+<tr><td>1200 台虚拟机所需新服务器</td><td>9 台</td><td>6 台</td></tr>
+<tr><td>已申请 / 还需申请</td><td>2 台 / 7 台</td><td>2 台 / 4 台</td></tr>
+<tr><td>按候选单机并发汇总的集群预算</td><td>约 666 台（9 × 74）</td><td>约 372 台（6 × 62）</td></tr>
+<tr><td>重点验证</td><td>3 GB 下的内存余量、群发耗时及整机并发</td><td>2 GB 下的内存压力、换页与磁盘负载、耗时及成功率</td></tr>
+</tbody></table></div>
+<p><strong>对比结论：</strong>若验证通过，2 GB 方案可在 3 GB 候选方案的单机 140 台基础上，进一步提升至 200 台，密度增加约 43%；服务器总需求由 9 台降至 6 台，还需申请数量由 7 台降至 4 台。但单机并发预算由约 74 台降至 62 台，集群总算力也随服务器数量减少而下降。</p>
+<p>当日有效记录的峰值为 225 个销售 id，低于两种方案估算的集群并发预算；这仅支持开展试点，不能证明 2 GB 或 3 GB 方案已满足完整生产需求。需按销售 id 与虚拟机的对应关系、账号在各服务器上的分布、任务截止时间和多个工作日的峰值继续验证。</p>
+<p><strong>实施建议：</strong>先选 10～20 台代表性虚拟机，对比 2 GB 与 3 GB 下的登录、群发和连续运行表现；确认 2 GB 无明显耗时或失败率退化、无持续内存压力后，再依次压测 160、180、200 台。若 2 GB 出现频繁换页或明显性能退化，保留 3 GB 方案。</p>
+<p class="note">两个方案均为待验证目标。各并发预算以原 CPU 消耗模型为前提，未扣除宿主机实际 CPU 开销，最终值可能需要下调；采购数量应在容量与业务时效验证后确认。</p>
+</section>
+<section id="observed-concurrency">
+<h2>9. 2026 年 10 月 22 日群发数据分析</h2>
+<p><strong>按计划开始时间作为执行开始时间估算，当日有效记录的销售并发峰值为 225，发生在 11:38:36～11:38:47。</strong></p>
+<p>统计方法：以“计划群发开始时间”至“群发结束时间”作为执行区间，按销售 id 去重，计算同一时刻仍在执行区间内的销售数；结束时刻不再计入，同一销售的重叠记录只计算一次。若 1 个销售 id 对应 1 个企微账号及 1 台虚拟机，则该数值可近似理解为同时群发的虚拟机数量。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>数据指标</th><th>统计结果</th></tr></thead>
+<tbody>
+<tr><td>数据记录总数 / 涉及销售 id</td><td>5533 条 / 946 个</td></tr>
+<tr><td>有效时间区间 / 有效记录涉及销售 id</td><td>5398 条 / 929 个</td></tr>
+<tr><td>剔除的异常记录</td><td>135 条：103 条结束日期为 1970 年，32 条结束时间早于计划开始时间</td></tr>
+<tr class="recommend"><td><strong>按销售 id 去重的并发峰值</strong></td><td><strong>225，发生在 11:38:36～11:38:47</strong></td></tr>
+<tr><td>未按销售 id 去重的记录并发峰值</td><td>255 条，发生在 11:32:41～11:32:42；不直接作为虚拟机并发数</td></tr>
+<tr><td>11:30～12:00 的平均并发</td><td>约 202（按持续时间加权）</td></tr>
+</tbody></table></div>
+<p class="note">来源：<a href="20261022群发数据.xlsx">20261022群发数据.xlsx</a>，工作表 Table 1，B 列销售 id、E 列计划开始时间、F 列结束时间。原始文件保持不变。此处统计的是执行区间重叠，区间可能包含等待，不能认定区间内持续占用 60% CPU。</p>
+</section>
+<section>
+<h2>10. 半小时销售并发峰值分布</h2>
+<p>以下数值为各半小时内、按销售 id 去重后的同时群发峰值。跨时段尚未结束的任务继续计入；不是该时段累计发起的销售数。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>小时</th><th>前半小时峰值（00～30 分）</th><th>后半小时峰值（30 分～下一整点）</th></tr></thead>
+<tbody>
+<tr><td>06 时</td><td>1</td><td>6</td></tr>
+<tr><td>07 时</td><td>36</td><td>32</td></tr>
+<tr><td>08 时</td><td>30</td><td>108</td></tr>
+<tr><td>09 时</td><td>153</td><td>132</td></tr>
+<tr><td>10 时</td><td>142</td><td>149</td></tr>
+<tr class="recommend"><td>11 时</td><td>199</td><td>225</td></tr>
+<tr><td>12 时</td><td>183</td><td>74</td></tr>
+<tr><td>13 时</td><td>85</td><td>107</td></tr>
+<tr><td>14 时</td><td>162</td><td>128</td></tr>
+<tr><td>15 时</td><td>103</td><td>108</td></tr>
+<tr><td>16 时</td><td>136</td><td>113</td></tr>
+<tr><td>17 时</td><td>144</td><td>182</td></tr>
+<tr><td>18 时</td><td>97</td><td>103</td></tr>
+<tr><td>19 时</td><td>122</td><td>93</td></tr>
+<tr><td>20 时</td><td>132</td><td>188</td></tr>
+<tr><td>21 时</td><td>163</td><td>73</td></tr>
+<tr><td>22 时</td><td>40</td><td>15</td></tr>
+<tr><td>23 时</td><td>2</td><td>1</td></tr>
+</tbody></table></div>
+<p>最高负载时段为 <strong>11:30～12:00</strong>，峰值 225，时间加权平均约 202；其次为 11:00～11:30，峰值 199，以及 20:30～21:00，峰值 188。由此可见任务在全天分散执行，同时在部分时段形成集中高峰。</p>
+<p class="note">本文件的有效区间在 00:00～06:00 无重叠记录，表中省略该时段。半小时峰值用于观察负载分布，峰值出现时刻仍按秒级区间重叠计算。</p>
+</section>
+<section>
+<h2>11. 基于当日数据的错峰可行性结论</h2>
+<div class="callout">
+<strong>当日任务已呈现时间分散的特征，错峰群发具备试点可行性；“2 核 3 GB、单机 140 台、共 9 台服务器”可作为验证目标。</strong>
+<p>增加常驻虚拟机数量，配合每台服务器的群发并发控制，有望提高部署密度并减少服务器需求。该目标尚需通过 3 GB 内存与整机负载压测确认。</p>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>对比项目</th><th>结果</th><th>适用条件</th></tr></thead>
+<tbody>
+<tr><td>1200 台虚拟机的服务器需求</td><td>9 台；已申请 2 台，还需申请 7 台</td><td>每台最多 140 台，须压测验证</td></tr>
+<tr><td>单机预计同时群发能力</td><td>约 74 台</td><td>按单机 140 台、其余空闲、CPU 预算 80% 估算</td></tr>
+<tr><td>9 台合计并发预算</td><td>约 666 台（9 × 74）</td><td>按每台部署 140 台的模型汇总，未扣除宿主机实际 CPU 开销；并非实测性能</td></tr>
+<tr class="recommend"><td><strong>当日有效记录的全局并发峰值</strong></td><td><strong>225 个销售 id</strong></td><td>按 1 个销售 id 对应 1 台虚拟机进行比较</td></tr>
+<tr><td>峰值平均分配至 9 台服务器</td><td>每台约 25 个同时群发</td><td>仅表示均匀分配下的平均值，不代表各台服务器实际峰值</td></tr>
+</tbody></table></div>
+<p><strong>实施条件：</strong>按服务器控制群发并发，结合历史高峰分散账号；超出并发预算的任务进入队列，并验证排队后的任务完成时间满足业务要求。3 GB 配置需验证群发耗时、成功率及内存换页情况。</p>
+<p><strong>容量确认：</strong>继续采集多个正常工作日及集中营销日的数据，补充每台服务器的账号映射，统计各台峰值后再确定并发上限和最终采购数量。不能直接以全局平均代替单机峰值。</p>
+<p class="note">本次仅有一天数据，全表涉及 946 个销售 id，未覆盖全部 1200 个销售账号，且 135 条异常记录未参与统计。计划时间可能包含等待，因此 225 不等同于完整实际 CPU 负载峰值；225 与 666 的比较仅用于评估试点价值，不能单独证明采购容量已足够。前述采购测算仍未额外计入故障接管及维护备用资源。</p>
+</section>
+</main></body></html>
