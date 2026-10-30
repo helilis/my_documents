@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RPA迁移实施进度表</title>
+<style>
+:root{--ink:#1b2e46;--muted:#64758a;--line:#dfe6ee;--blue:#245dc5;--wash:#eef4ff;--bg:#f1f4f8;--amber:#896116}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.75 "Microsoft YaHei","PingFang SC",sans-serif}main{max-width:1320px;margin:28px auto;background:#fff;border:1px solid var(--line);border-radius:16px;padding:38px 44px}header{border-bottom:2px solid var(--ink);padding-bottom:20px}.eyebrow{font-size:12px;letter-spacing:2px;font-weight:700;color:var(--blue)}h1{font-size:32px;line-height:1.3;margin:8px 0 10px}h2{font-size:21px;margin:28px 0 12px}h3{font-size:16px;margin:0 0 6px}p{margin:8px 0}.sub,.note{color:var(--muted)}.note{font-size:12px}.sub{margin:0}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0}.metric{border:1px solid var(--line);border-radius:10px;padding:14px 18px}.metric b{font-size:27px;color:var(--blue);margin-right:5px}.metric small{display:block;font-size:12px;color:var(--muted)}.takeaway{background:var(--wash);border-left:4px solid var(--blue);padding:14px 18px;margin:18px 0}.takeaway p{margin:4px 0}.roadmap{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.step{border:1px solid var(--line);border-top:3px solid var(--blue);padding:14px;border-radius:8px}.step .label{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--blue);margin-bottom:5px}.step p{font-size:13px;margin:3px 0}.parallel{margin:12px 0 0;padding:10px 14px;border:1px dashed #b5c7df;border-radius:7px;color:var(--muted);font-size:13px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:11px 12px;vertical-align:top;text-align:left;border-bottom:1px solid var(--line)}th{background:#f1f5fa;color:#344b66;font-weight:700}td:first-child{white-space:nowrap;font-weight:700;color:var(--blue)}td strong{display:block;font-size:14px;margin-bottom:3px}tr.key td{background:#f4f8ff}.badge{display:inline-block;white-space:nowrap;padding:2px 9px;border-radius:20px;font-size:11px;background:#f0f3f7;color:var(--muted)}.badge.wait{background:#fff4db;color:var(--amber)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}.panel{border:1px solid var(--line);padding:18px;border-radius:10px}.panel p,.panel li{font-size:13px}.panel ul{padding-left:19px;margin:8px 0}.panel li{margin:6px 0}.closing{margin-top:22px;padding:15px 18px;background:var(--wash);border-radius:8px;font-size:14px}footer{font-size:12px;color:var(--muted);margin-top:22px;padding-top:12px;border-top:1px solid var(--line)}
+@media(max-width:900px){main{margin:0;border:0;border-radius:0;padding:24px 18px}.roadmap{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}h1{font-size:26px}table{min-width:950px}.metrics{gap:8px}.metric{padding:11px}.metric b{font-size:23px}}
+@media print{@page{size:A4 landscape;margin:12mm}body{background:#fff;font-size:11px}main{max-width:none;margin:0;padding:0;border:0}h1{font-size:25px}h2{font-size:17px;margin:20px 0 9px}header{padding-bottom:12px}.metrics{margin:12px 0}.metric{padding:9px 13px}.metric b{font-size:22px}.takeaway{margin:12px 0;padding:10px 14px}.step{padding:10px}.table-wrap{overflow:visible}table{min-width:0;font-size:10px}th,td{padding:7px 8px}td strong{font-size:11px}.badge{font-size:9px}.panel{padding:12px}.panel p,.panel li{font-size:11px}tr,.panel,.step,.metrics,.takeaway,.closing{break-inside:avoid}h2,h3{break-after:avoid}thead{display:table-header-group}.sub{font-size:12px}.note,footer{font-size:10px}}
+</style>
+</head>
+<body><main>
+<header>
+<div class="eyebrow">RPA · 实施安排与进度跟踪</div>
+<h1>RPA迁移实施进度表</h1>
+<p class="sub">先隔离办公资源，开发调度并分批迁入；核定容量缺口后再推进手机端补充方案</p>
+<p class="sub"><strong>RPA 虚拟机统一规格：2 核、2 GB 内存（Windows 10）。</strong></p>
+<p class="note">更新日期：2026 年 10 月 29 日 ｜ 本表为实施计划；负责人及预计完成时间按当前安排填写，实际进度待更新。</p>
+</header>
+<div class="metrics">
+<div class="metric"><b>1236</b>个销售账号<small>本次 RPA 迁移范围，不考虑团队扩张</small></div>
+<div class="metric"><b>93</b>台已完成迁移<small>已完成 7.52% 迁移，剩余 1143 台</small></div>
+<div class="metric"><b>2</b>台新服务器<small>已申请，等待到位后部署并持续迁入</small></div>
+</div>
+<div class="takeaway">
+<p><strong>讲解主线：</strong>迁走 19 台办公虚拟机、释放现有物理机 → 按候选名单小批量迁入 RPA → 两台新服务器到位后持续扩容 → 按实测容量核定剩余缺口。</p>
+<p><strong>前期并行推进：</strong>办公虚拟机迁移、候选名单整理、任务调度与分批迁入功能开发；手机端 RPA 安排在容量缺口核定之后。</p>
+</div>
+
+<h2>一、阶段路线</h2>
+<div class="roadmap">
+<div class="step"><div class="label">阶段 01 · 准备</div><h3>释放资源，整理名单，开发调度</h3><p>迁移办公虚拟机、整理候选批次；开发任务调度，支持排队、单机并发限制及账号执行互斥。</p><p class="note">多项工作并行开展，首批试点前调度功能可用。</p></div>
+<div class="step"><div class="label">阶段 02 · 试点</div><h3>小批量迁入，验证并发控制</h3><p>按 2 核 2 GB 先迁入 10～20 个账号；由调度器控制群发并发，验证任务排队及完成时效。</p><p class="note">以实测结果确定批次规模和单机并发上限。</p></div>
+<div class="step"><div class="label">阶段 03 · 扩容</div><h3>新服务器到位，受控扩容</h3><p>部署两台新服务器并接入调度；逐台设置并发上限，持续按批次迁入账号。</p><p class="note">单机 200 台、约 62 台并发为压测目标，实际限额按测试结果配置。</p></div>
+<div class="step"><div class="label">阶段 04 · 补齐</div><h3>先核定缺口，再验证手机端</h3><p>汇总服务器实测容量；若仍不足以承载 1236 个账号，再开发验证手机端 RPA。</p><p class="note">验证通过后接入调度，承接剩余账号。</p></div>
+</div>
+<div class="parallel"><strong>后续补充工作：</strong>手机端 RPA 放在进度最后，待现有及新服务器容量核定后，若仍有缺口，再验证在销售办公电脑上的运行方式。</div>
+
+<h2>二、实施进度表</h2>
+<div class="table-wrap"><table>
+<thead><tr><th style="width:5%">编号</th><th style="width:25%">工作事项</th><th style="width:34%">完成标志与阶段产出</th><th style="width:14%">当前进度</th><th style="width:10%">负责人</th><th style="width:12%">预计完成时间</th></tr></thead>
+<tbody>
+<tr><td>A1</td><td><strong>迁移 19 台办公虚拟机</strong>迁至销售办公虚拟机专用服务器，腾出现有物理机。</td><td>19 台办公虚拟机迁移完成、办公可用；腾出物理机的配置及可用资源已核实。办公与 RPA 分开承载。</td><td><span class="badge" style="background:#e7f5ec;color:#237444">已完成</span></td><td>吴天明</td><td>2026-10-24</td></tr>
+<tr><td>A2</td><td><strong>整理销售账号迁移名单</strong>优先选择非头部、客户数较少、业绩相对较弱的销售。</td><td>形成账号清单、优先级和迁移批次；由业务负责人确认，目标是降低试点性能问题对团队的影响。</td><td><span class="badge">实际状态待确认</span></td><td>梁博圆</td><td>2026-10-26</td></tr>
+<tr class="key"><td>A3</td><td><strong>开发任务调度与分批迁入功能</strong>账号、环境、批次、队列及执行结果统一管理。</td><td>可创建迁入批次、分配目标虚拟机、启用新环境；可限制单机并发、账号互斥，并查看执行结果。</td><td><span class="badge" style="background:#e7f5ec;color:#237444">已完成</span></td><td>何建乔</td><td>2026-10-27</td></tr>
+<tr class="key"><td>B1</td><td><strong>现有物理机首批试点</strong>按 2 核 2 GB 统一规格准备 RPA 环境，先迁入 10～20 个候选账号。</td><td>账号能够执行群发；取得任务耗时、成功率、内存与换页数据，确定后续部署密度和并发上限。</td><td><span class="badge">计划：前置完成后开展</span></td><td>何建乔</td><td>2026-10-30</td></tr>
+<tr><td>B2</td><td><strong>验证部署密度，逐批迁入</strong>逐步增加账号，按每台服务器控制群发并发。</td><td>形成现有服务器实测容量、并发上限和批次记录；每批效果满足业务要求后再扩大规模。</td><td><span class="badge">计划：试点后开展</span></td><td>何建乔</td><td>2026-11-03</td></tr>
+<tr class="key"><td>C1</td><td><strong>两台新服务器部署及持续迁入</strong>部署虚拟机和执行环境，纳入统一调度。</td><td>两台服务器可用；确认各自容量和并发上限，持续承接后续迁移批次。</td><td><span class="badge wait">已申请 · 等待到位</span></td><td>王锦洁</td><td>到货时间待定</td></tr>
+<tr><td>D1</td><td><strong>核定剩余容量与缺口</strong>对照 1236 个账号，核算剩余迁移需求。</td><td>明确“已迁入、可继续迁入、剩余缺口”；若仍有缺口，启动 E1 手机端补充方案。</td><td><span class="badge">计划：容量核定后开展</span></td><td>何建乔</td><td>待定</td></tr>
+<tr><td>E1</td><td><strong>手机端 RPA 开发与可行性验证</strong>作为最后的补充工作，验证在销售办公电脑上的运行方式。</td><td>明确模拟器或连接实体手机等技术路线；验证办公干扰、登录、离线处理和群发效果，通过后接入调度并安排剩余账号。</td><td><span class="badge">计划：确认缺口后开展</span></td><td>何建乔</td><td>2026 年 11 月中旬预演</td></tr>
+<tr><td>E2</td><td><strong>功能需求补足</strong>补齐企微打电话能力等功能需求。</td><td>完成企微打电话等功能开发与验证，补足业务所需能力。</td><td><span class="badge">计划：待开发</span></td><td>何建乔</td><td>2026 年 11 月下旬</td></tr>
+</tbody></table></div>
+<p class="note">状态仅反映当前已知事实与计划安排；“已申请”不代表已到货或已部署。日期为预计安排；C1 到货时间、D1 完成时间待定，E1 计划于 2026 年 11 月中旬预演，E2 计划于 2026 年 11 月下旬完成。</p>
+
+<h2>三、迁移进度表</h2>
+<div class="table-wrap"><table>
+<thead><tr><th style="width:18%">迁移时间</th><th style="width:16%">迁移数量</th><th style="width:16%">剩余数量</th><th style="width:23%">累计完成迁移数</th><th style="width:27%">备注</th></tr></thead>
+<tbody>
+<tr><td>2026-10-14</td><td>36 台</td><td>1200 台</td><td>36 台（2.91%）</td><td>客服RPA虚拟机迁移</td></tr>
+<tr><td>2026-10-27</td><td>19 台</td><td>1181 台</td><td>55 台（4.45%）</td><td></td></tr>
+<tr><td>2026-10-28</td><td>38 台</td><td>1143 台</td><td>93 台（7.52%）</td><td></td></tr>
+</tbody></table></div>
+
+<h2>四、名单与容量的确认口径</h2>
+<div class="grid2">
+<div class="panel"><h3>候选名单：以团队影响较小为优先</h3><p>筛选标准为非头部、客户数较少、业绩相对较弱；不以 RPA 负载低作为筛选条件。</p><ul><li>名单字段：销售 id、企微账号、团队、客户数、业绩周期与数值、头部标记、优先级及批次。</li><li>补充客户总数和业绩数据，由业务负责人确认名单。</li><li>群发表中的“实际发送客户数”不等于账号客户总数。</li></ul></div>
+<div class="panel"><h3>规格已确定，容量按每台服务器实测确认</h3><p>RPA 虚拟机统一采用 2 核 2 GB。新服务器按单机 200 台、约 62 台同时群发作为容量验证目标，必须控制群发并发。</p><ul><li>规格固定，部署密度和并发上限待压测确认；CPU 并发预算为 80%，未扣除宿主机实际 CPU 开销。</li><li>腾出的现有物理机按自身配置评估，不直接套用新服务器容量。</li><li>剩余需求 = 1236 − 已迁入账号数；再与已验证的可用剩余容量对照。</li></ul></div>
+</div>
+<div class="closing"><strong>当前推进重点：</strong>先并行推进办公虚拟机迁移、候选名单整理与调度功能开发；现有物理机释放后试点，新服务器到位后持续迁入。最后核定容量缺口，若仍不足以承载 1236 个账号，再开发验证手机端 RPA 并安排剩余账号。</div>
+<h2>五、三种虚拟机规格的服务器资源申请汇总</h2>
+<p>当前迁移总量为 <strong>1236 台</strong>，已完成 <strong>93 台</strong>，剩余 <strong>1143 台</strong>。以下沿用结论文档中的单机容量模型，按剩余 1143 台测算；新服务器统一配置为 <strong>128 个物理核心、512 GB 内存</strong>，已申请 <strong>2 台</strong>。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>虚拟机规格</th><th>单机部署数量</th><th>单机约可同时群发数</th><th>留给宿主机及开销的内存</th><th>服务器总需求</th><th>已申请</th><th>还需申请</th></tr></thead>
+<tbody>
+<tr><td>2 核 4 GB（原规划）</td><td>100 台</td><td>82 台</td><td>112 GB</td><td>12 台</td><td>2 台</td><td>10 台</td></tr>
+<tr><td>2 核 3 GB（对比方案）</td><td>140 台</td><td>74 台</td><td>92 GB</td><td>9 台</td><td>2 台</td><td>7 台</td></tr>
+<tr class="key"><td>2 核 2 GB（当前选定规格）</td><td><strong>200 台</strong></td><td><strong>62 台</strong></td><td>112 GB</td><td><strong>6 台</strong></td><td>2 台</td><td><strong>4 台</strong></td></tr>
+</tbody></table></div>
+<p><strong>当前资源申请参考：</strong>按已选定的 2 核 2 GB 规格、单机 200 台的容量目标，剩余 1143 台虚拟机对应 6 台同配置服务器；扣除已申请的 2 台，还需申请 4 台。单机 200 台及约 62 台并发均须通过压测确认。</p>
+<p class="note">服务器总需求 = 剩余 1143 台 ÷ 单机部署数量，向上取整；还需申请 = 服务器总需求 − 已申请 2 台。未额外计入团队扩张、故障接管及维护备用资源。腾出的现有物理机尚未确认可承载容量，本表暂不抵扣其额外可用资源；实测后重新核定追加申请量。</p>
+<p class="note">并发按 CPU 80% 预算、群发占用 60%、其余虚拟机空闲占用 10% 估算，未计入宿主机实际 CPU 开销；内存余量尚未扣除宿主机及虚拟化实际占用。2 核 4 GB 行采用原规划 100 台口径；4 GB 的其他密度方案见原结论文档。</p>
+<p class="note">参考：<a href="RPA服务器部署与群发策略结论.html">RPA服务器部署与群发策略结论</a>。本表用于资源申请比较，当前实施规格仍为 2 核 2 GB。</p>
+<footer>范围说明：本计划覆盖 1236 个销售 RPA 账号；60 个客服账号已完成迁移，当前运行在公司现有服务器上。本文用于实施讲解与阶段跟踪，不预设未经确认的完成日期或容量。</footer>
+</main></body>
+</html>
